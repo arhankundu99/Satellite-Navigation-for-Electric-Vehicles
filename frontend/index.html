@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Router</title>
+
+    <!--Bootstrap scripts-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
+
+    <!--axios (To make HTTP requests)-->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!--Here Maps Scripts-->
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    <script>window.ENV_VARIABLE = 'developer.here.com'</script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <h2 class="h2" style="margin: 20px; text-align: center;">EV Router</h2>
+    <p style="text-align: center;">Reference: <a href="https://arxiv.org/pdf/1910.09812.pdf">https://arxiv.org/pdf/1910.09812.pdf</a></p>
+
+    <div class="container" id="form-map-container">
+
+        <div class="container" id="form-container">
+            <form method="get" class="form" id="EVConfigurationParameters">
+
+                <div class="form-group">
+                    <label for="source">Source: </label>
+                    <select class="form-select" aria-label="Default select example" id="source" name="source">
+                        <option selected>Enter Source</option>
+                        <option value="Liverpool, NewYork">Liverpool, NewYork</option>
+                        <option value="Columbia, Missouri">Columbia, Missouri</option>
+                        <option value="Queens, NewYork">Queens, NewYork</option>
+                        <option value="San Diego California">San Diego California</option>
+                        <option value="Houston, Texas">Houston, Texas</option>
+                        <option value="Detroit, Oregon">Detroit, Oregon</option>
+                        <option value="Lincoln City, Oregon">Lincoln City, Oregon</option>
+                        <option value="Binghamton, NewYork">Binghamton, NewYork</option>
+                        <option value="Asheville, North Carolina">Asheville, North Carolina</option>
+                        <option value="Mountain View, California">Mountain View, California</option>
+                        <option value="Chicago, Illinois">Chicago, Illinois</option>
+                        <option value="Brooklyn, NewYork">Brooklyn, NewYork</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="destination">Destination: </label>
+                    <select class="form-select" aria-label="Default select example" id="destination" name="destination">
+                        <option selected>Enter Destination</option>
+                        <option value="Liverpool, NewYork">Liverpool, NewYork</option>
+                        <option value="Columbia, Missouri">Columbia, Missouri</option>
+                        <option value="Queens, NewYork">Queens, NewYork</option>
+                        <option value="San Diego California">San Diego California</option>
+                        <option value="Houston, Texas">Houston, Texas</option>
+                        <option value="Detroit, Oregon">Detroit, Oregon</option>
+                        <option value="Lincoln City, Oregon">Lincoln City, Oregon</option>
+                        <option value="Binghamton, NewYork">Binghamton, NewYork</option>
+                        <option value="Asheville, North Carolina">Asheville, North Carolina</option>
+                        <option value="Mountain View, California">Mountain View, California</option>
+                        <option value="Chicago, Illinois">Chicago, Illinois</option>
+                        <option value="Brooklyn, NewYork">Brooklyn, NewYork</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="initialCharge">Initial Charge (in KM): </label>
+                    <input type="number" class="form-control" id="initialCharge" name="initialCharge"
+                        placeholder="Enter Initial Charge">
+                </div>
+                <div class="form-group">
+                    <label for="minimumThresoldCharge">Minimum Thresold Charge (in KM): </label>
+                    <input type="number" class="form-control" id="minimumThresoldCharge" name="minimumThresoldCharge"
+                        placeholder="Enter Minimum Thresold Charge">
+                </div>
+                <div class="form-group">
+                    <label for="maxCharge">Maximum Charge (in KM): </label>
+                    <input type="number" class="form-control" id="maxCharge" name="maxCharge"
+                        placeholder="Enter Maximum Charge">
+                </div>
+                <div class="form-group">
+                    <label for="minChargeAtDestination">Minimum Charge At Destination (in KM): </label>
+                    <input type="number" class="form-control" id="minChargeAtDestination" name="minChargeAtDestination"
+                        placeholder="Enter Minimum Charge At Destination">
+                </div>
+
+                <div class="form-group">
+                    <label for="plugType">Plug Type: </label>
+                    <select class="form-select" aria-label="Default select example" id="plugType" name="plugType">
+                        <option value="Type1Plug">Type 1 plug</option>
+                        <option value="Type2Plug">Type 2 plug</option>
+                        <option value="CCSPlug">CCS Plug</option>
+                        <option value="CHAdeMOPlug">CHAdeMO plug</option>
+                        <option value="TeslaSupercharger">Tesla Supercharger</option>
+                    </select>
+                </div>
+
+                <br>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="batterySwapping">
+                    <label class="form-check-label" for="batterySwapping">Battery Swapping</label>
+                </div>
+
+                <br>
+                <button type="submit" id="submitButton" class="btn btn-primary mr-1">Get Optimal Route!</button>
+            </form>
+        </div>
+
+
+        <div class="container" id="map-container">
+            <div id="map"></div>
+        </div>
+
+    </div>
+
+    <div class="container" id="result-container">
+        <p id="no-optimal-route-text">No Optimal route from source to
+            destination!</p>
+        <p id="total-time-to-reach-destination"></p>
+
+        <table class="table" id="#charging-stops-table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Stops</th>
+                    <th scope="col">Charging Time (in hours)</th>
+                    <th scope="col">Arrival Time (in hours)</th>
+                    <th scope="col">SOC (in KM)</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+
+    <script src="index.js"></script>
+
+</body>
+
+</html>

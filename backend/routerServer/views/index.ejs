@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Routing</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <div class="mx-auto" style="width: 600px;" id="main-cointainer">
+
+        <div class="text-center">
+            <h2 class="h2">EV Router</h2>
+        </div>
+
+        <form action="/" method="get">
+            <div class="form-group">
+                <label for="source">Source: </label>
+                <input type="text" class="form-control" id="source" name="source" placeholder="Enter Source">
+            </div>
+            <div class="form-group">
+                <label for="destination">Destination: </label>
+                <input type="text" class="form-control" id="destination" name="destination"
+                    placeholder="Enter Destination">
+            </div>
+            <div class="form-group">
+                <label for="initialCharge">Initial Charge (in KM): </label>
+                <input type="number" class="form-control" id="initialCharge" name="initialCharge" placeholder="Enter Initial Charge">
+            </div>
+            <div class="form-group">
+                <label for="maxCharge">Maximum Charge (in KM): </label>
+                <input type="number" class="form-control" id="maxCharge" name="maxCharge" placeholder="Enter Maximum Charge">
+            </div>
+            <button type="submit" class="btn btn-primary">Get Optimal Route!</button>
+        </form>
+
+        <% if(!route){ %>
+        <p class="p">No Optimal route from source to destination!</p>
+        <% } else { %>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Stops</th>
+                    <th scope="col">Time (in hours)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let i = 0; i < route[0].length; i++){ %>
+                <tr>
+                    <th scope="row"><%= route[0][i] %></th>
+                    <td><%= route[1][i].toFixed(2) %></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+        <% } %>
+    </div>
+</body>
+
+</html>
