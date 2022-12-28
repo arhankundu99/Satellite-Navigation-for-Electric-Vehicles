@@ -5,7 +5,12 @@ const cors = require('cors');
 
 const path = require('path');
 
-require('dotenv').config({path: path.join(__dirname, '.env')});
+let chargingStationsServiceAPI = 'http://localhost:3001/chargingStations/'
+
+if (process.env.NODE_ENV === 'production') {
+    require('dotenv').config({ path: path.join(__dirname, '.env') });
+    chargingStationsServiceAPI = process.env.CHARGING_STATIONS_SERVICE;
+}
 
 //extract the electricVehicleRouter class
 const ElectricVehicleRouter = require('./ElectricVehicleRouter/ElectricVehicleRouter');
@@ -22,11 +27,11 @@ app.use(cors());
 
 
 app.get('/route', async (req, res) => {
-    
+
     //get the queries from the form
     const { source, destination, initialCharge = 320, minimumThresoldCharge = 0, maxCharge = initialCharge, minChargeAtDestination = 0, batterySwapping = false, plugType } = req.query;
 
-    const chargingStationsDataSetAPI = 'http://localhost:3001/chargingStations' + `?plugType=${plugType}&source=${source}&destination=${destination}`;
+    const chargingStationsDataSetAPI = `${chargingStationsServiceAPI}` + `?plugType=${plugType}&source=${source}&destination=${destination}`;
     const chargingStations = await axios.get(chargingStationsDataSetAPI);
 
     //initialise electricVehicleRouter object
@@ -42,7 +47,7 @@ app.get('/route', async (req, res) => {
         //get the optimal route
         electricVehicleRoute = await electricVehicleRouter.getOptimalRoute(source, destination, parseInt(initialCharge), parseInt(minimumThresoldCharge), parseInt(maxCharge), parseInt(minChargeAtDestination), batterySwapping, plugType);
     }
-    
+
     return res.send(electricVehicleRoute);
 });
 
