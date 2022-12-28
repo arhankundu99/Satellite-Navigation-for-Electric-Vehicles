@@ -5,12 +5,10 @@ const cors = require('cors');
 
 const path = require('path');
 
-let chargingStationsServiceAPI = 'http://localhost:3001/chargingStations/'
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-if (process.env.NODE_ENV === 'production') {
-    require('dotenv').config({ path: path.join(__dirname, '.env') });
-    chargingStationsServiceAPI = process.env.CHARGING_STATIONS_SERVICE;
-}
+const chargingStationsServiceAPI = process.env.CHARGING_STATIONS_SERVICE || 'http://localhost:3001/chargingStations';
+
 
 //extract the electricVehicleRouter class
 const ElectricVehicleRouter = require('./ElectricVehicleRouter/ElectricVehicleRouter');
@@ -47,7 +45,6 @@ app.get('/route', async (req, res) => {
         //get the optimal route
         electricVehicleRoute = await electricVehicleRouter.getOptimalRoute(source, destination, parseInt(initialCharge), parseInt(minimumThresoldCharge), parseInt(maxCharge), parseInt(minChargeAtDestination), batterySwapping, plugType);
     }
-
     return res.send(electricVehicleRoute);
 });
 
