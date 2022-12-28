@@ -13,7 +13,7 @@ noOptimalRouteParagraph.style.display = "none";
 totalTimeToReachDestinationParagraph.style.display = "none";
 optimalStopsTable.style.display = "none";
 //resultContainer.style.display = "none";
-console.dir(resultContainer);
+
 
 //Initialise the map platform
 const platform = new H.service.Platform({
@@ -44,7 +44,7 @@ submitButton.addEventListener('click', async (event) => {
     const batterySwapping = document.getElementById("batterySwapping").checked;
     params += `batterySwapping=${batterySwapping}`;
 
-    const routingAPI = 'http://localhost:3000/route?';
+    const routingAPI = 'https://routing-service.onrender.com/route?';
 
     //invoke the routing server to get routing data
     const response = await fetch(`${routingAPI}${params}`);
